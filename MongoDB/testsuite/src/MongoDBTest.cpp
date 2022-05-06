@@ -87,10 +87,13 @@ void MongoDBTest::testArray()
 	birthdate.assign(1969, 3, 9);
 	arr->add(birthdate.timestamp());
 
-	arr->add(static_cast<int>(1993));
+	arr->add(static_cast<Poco::Int32>(1993));
 	arr->add(false);
 
-	assertEqual(arr->size(), 4);
+	// Document-style interface
+	arr->add("4", "12.4");
+
+	assertEqual(arr->size(), 5);
 	assertTrue(arr->exists("0"));
 	assertTrue(arr->exists("1"));
 	assertTrue(arr->exists("2"));
@@ -99,8 +102,13 @@ void MongoDBTest::testArray()
 
 	assertEqual(arr->get<std::string>(0), "First");
 	assertEqual(arr->get<Poco::Timestamp>(1).raw(), birthdate.timestamp().raw());
-	assertEqual(arr->get<int>(2), 1993);
+	assertEqual(arr->get<Poco::Int32>(2), 1993);
 	assertEqual(arr->get<bool>(3), false);
+	assertEqual(arr->get<std::string>(4), "12.4");
+
+	// Document-style interface
+	assertEqual(arr->get<Poco::Int32>("2"), 1993);
+	assertEqual(arr->get<std::string>("4"), "12.4");
 }
 
 

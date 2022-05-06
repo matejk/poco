@@ -39,6 +39,10 @@ public:
 	virtual ~Array();
 		/// Destroys the Array.
 
+	// Document template functions available for backward compatibility
+	using Document::add;
+	using Document::get;
+
 	template<typename T>
 	Document& add(T value)
 		/// Creates an element with the name from the current pos and value and
@@ -46,7 +50,7 @@ public:
 		///
 		/// The active document is returned to allow chaining of the add methods.
 	{
-		return Document::add<T>(Poco::NumberFormatter::format(_curPos++), value);
+		return Document::add<T>(Poco::NumberFormatter::format(size()), value);
 	}
 
 	Document& add(const char* value)
@@ -55,7 +59,7 @@ public:
 		///
 		/// The active document is returned to allow chaining of the add methods.
 	{
-		return Document::add(Poco::NumberFormatter::format(_curPos++), value);
+		return Document::add(Poco::NumberFormatter::format(size()), value);
 	}
 
 	template<typename T>
@@ -94,8 +98,6 @@ public:
 
 private:
 	friend void BSONReader::read<Array::Ptr>(Array::Ptr& to);
-
-	std::size_t	_curPos = 0;
 };
 
 
@@ -118,7 +120,6 @@ template<>
 inline void BSONReader::read<Array::Ptr>(Array::Ptr& to)
 {
 	to->read(_reader);
-	to->_curPos = to->size()-1;
 }
 
 
